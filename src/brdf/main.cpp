@@ -96,12 +96,13 @@ int main(int argc, char *argv[])
 
     // make sure we can open the data files
     if( !checkTeapot() ) {
+        // TODO(cbraley): Hack this to support differing paths.
         QString errString = "Can't open data files.\n\nPlease run BRDF Explorer from the directory containing the data/, images/, probes/, and shaderTemplates/ subdirectories (probably the src/ directory).";
         QMessageBox::critical( NULL, "BRDF Explorer", errString );
         return 1;
     }
 
-    
+
     // center the window in the middle of the default screen
     QDesktopWidget desktopWidget;
     QRect rect = desktopWidget.screenGeometry();
@@ -110,17 +111,17 @@ int main(int argc, char *argv[])
     MainWindow main;
     main.setGeometry(rect);
     main.show();
-    
-    
-    
+
+
+
     // open all BRDFs passed in on the commandline
     if( argc > 1 )
     {
         std::vector<std::string> files;
-        for( int i = 1; i < argc; i++ )           
+        for( int i = 1; i < argc; i++ )
             files.push_back( std::string(argv[i]) );
         main.getParameterWindow()->openBRDFFiles( files );
     }
-    
+
     return app.exec();
 }
