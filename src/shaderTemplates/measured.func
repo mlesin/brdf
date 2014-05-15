@@ -89,7 +89,7 @@ int theta_diff_index(float theta_diff)
     return clamp(int(theta_diff * (2.0/M_PI * BRDF_SAMPLING_RES_THETA_D)), 0, BRDF_SAMPLING_RES_THETA_D - 1);
 }
 
-
+// TODO(cbraley): Here is what we want to modufy to support spectral stuff.
 vec3 BRDF( vec3 toLight, vec3 toViewer, vec3 normal, vec3 tangent, vec3 bitangent )
 {
     vec3 H = normalize(toLight + toViewer);
@@ -102,6 +102,8 @@ vec3 BRDF( vec3 toLight, vec3 toViewer, vec3 normal, vec3 tangent, vec3 bitangen
         phi_diff = atan(clamp(-dot(toLight, bitangent), -1, 1), clamp(dot(toLight, tangent), -1, 1));
     }
     else if (theta_H > 1e-3) {
+        // TODO(cbraley): Look into why the above code produces a degenerate basis vector and why gram-schmidt is needed.
+
         // use Gram-Schmidt orthonormalization to find diff basis vectors
         vec3 u = -normalize(normal - dot(normal,H) * H);
         vec3 v = cross(H, u);
