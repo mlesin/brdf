@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 # High Level setup ------------------------------------------------------------
 project(BRDF_Viewer) # Project name.
-set(BINARY_NAME bin/brdf_viewer) # Output location of the final C++ binary.
+set(BINARY_NAME brdf) # Output location of the final C++ binary.
 set(CMAKE_BUILD_TYPE Release) # Choose from {Debug, Release}.  Affects
 # optimization & debug symbols.
 set(CMAKE_MODULE_PATH CMakeModules) # Location of the Find.*.cmake files.
@@ -60,6 +60,8 @@ else()
     message(FATAL_ERROR "Could not find a suitable threads library(usually pthreads)!")
 endif()
 
+find_package(PkgConfig REQUIRED)
+
 # OpenGL and GLU libraries ----------------------------------------------------
 find_package(OpenGL)
 if(${OPENGL_FOUND})
@@ -77,12 +79,13 @@ else()
 endif()
 
 # GLEW library ----------------------------------------------------------------
-find_package(GLEW REQUIRED)
+pkg_search_module(GLEW REQUIRED glew)
 if(${GLEW_FOUND})
-    message("Found GLEW at ${GLEW_INCLUDE_PATH}")
-    target_link_libraries(${BINARY_NAME} ${GLEW_LIBRARY})
-    INCLUDE_DIRECTORIES(${GLEW_INCLUDE_PATH})
+    message("Found GLEW at ${GLEW_INCLUDEDIR}")
+    target_link_libraries(${BINARY_NAME} ${GLEW_STATIC_LIBRARIES})
+    INCLUDE_DIRECTORIES(${GLEW_INCLUDEDIR})
 else()
     message(FATAL_ERROR "Failed to find GLEW!")
 endif()
 
+install(TARGETS ${BINARY_NAME} RUNTIME DESTINATION $ENV{HOME}/brdf)
