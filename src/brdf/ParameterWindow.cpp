@@ -55,23 +55,23 @@ infringement.
 
 
 ParameterWindow::ParameterWindow()
-				: incidentThetaWidget(NULL),
+                : incidentThetaWidget(NULL),
                   incidentPhiWidget(NULL),
                   cmdLayout(NULL),
-			      channelComboBox(NULL),
+                  channelComboBox(NULL),
                   logPlotCheckbox(NULL), nDotLCheckbox(NULL),
                   soloBRDFWidget(NULL),
                   soloBRDFUsesColors(false)
 {
-	theta = 0.785398163;
-	phi = 0.785398163;
-	useLogPlot = false;
-	useNDotL = false;
+    theta = 0.785398163;
+    phi = 0.785398163;
+    useLogPlot = false;
+    useNDotL = false;
 
-	//mainLayout = new QVBoxLayout;
-	mainLayout = new QGridLayout;
+    //mainLayout = new QVBoxLayout;
+    mainLayout = new QGridLayout;
 
-	createLayout();
+    createLayout();
 
     setLayout(mainLayout);
 
@@ -88,13 +88,13 @@ ParameterWindow::~ParameterWindow()
 void ParameterWindow::createLayout()
 {
     int addIndex = 0;
-            
+
     channelComboBox = new QComboBox();
     connect( channelComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(emitBRDFListChanged()) );
-	channelComboBox->addItem( "Red Channel" );
-	channelComboBox->addItem( "Green Channel" );
-	channelComboBox->addItem( "Blue Channel" );
-	channelComboBox->addItem( "Luminance" );
+    channelComboBox->addItem( "Red Channel" );
+    channelComboBox->addItem( "Green Channel" );
+    channelComboBox->addItem( "Blue Channel" );
+    channelComboBox->addItem( "Luminance" );
     channelComboBox->setCurrentIndex( 3 );
     mainLayout->addWidget( channelComboBox, addIndex++, 0, 1, 2 );
 
@@ -103,13 +103,13 @@ void ParameterWindow::createLayout()
     logPlotCheckbox->setChecked( useLogPlot );
     connect( logPlotCheckbox, SIGNAL(stateChanged(int)), this, SLOT(emitGraphParametersChanged()) );
     mainLayout->addWidget( logPlotCheckbox, addIndex++, 0, 1, 2 );
-    
+
     nDotLCheckbox = new QCheckBox( "Multiply by N . L" );
     nDotLCheckbox->setChecked( useNDotL );
     connect( nDotLCheckbox, SIGNAL(stateChanged(int)), this, SLOT(emitGraphParametersChanged()) );
     mainLayout->addWidget( nDotLCheckbox, addIndex++, 0, 1, 2 );
-    
-    
+
+
     incidentThetaWidget = new FloatVarWidget("Incident angle - thetaL", 0, 90, radiansToDegrees(theta) );
     incidentPhiWidget = new FloatVarWidget("Incident angle - phiL", 0, 360, radiansToDegrees(phi) );
     connect(incidentThetaWidget, SIGNAL(valueChanged(float)), this, SLOT(emitIncidentDirectionChanged()));
@@ -123,7 +123,7 @@ void ParameterWindow::createLayout()
     cmdFrame->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed );
     cmdLayout = new QVBoxLayout;
     cmdLayout->setMargin( 5 );
-    
+
 
 
     cmdFrame->setLayout( cmdLayout );
@@ -134,9 +134,6 @@ void ParameterWindow::createLayout()
     scrollArea->setWidgetResizable( true );
     scrollArea->setWidget( cmdFrame );
     mainLayout->addWidget( scrollArea, addIndex++, 0, 1, 2 );
-
-    fileDialog = new QFileDialog(this, "Open BRDF File(s)", ".", "BRDF Files (*.brdf *.binary *.dat *.bparam)");
-    fileDialog->setFileMode(QFileDialog::ExistingFiles);
 }
 
 
@@ -150,8 +147,10 @@ void ParameterWindow::incidentVectorChanged( float newTheta, float newPhi )
 
 void ParameterWindow::openBRDFFromFile()
 {
-    if (fileDialog->exec()) {
-        QStringList fileNames = fileDialog->selectedFiles();
+    QFileDialog fileDialog(this, "Open BRDF File(s)", ".", "BRDF Files (*.brdf *.binary *.dat *.bparam)");
+    fileDialog.setFileMode(QFileDialog::ExistingFiles);
+    if (fileDialog.exec()) {
+        QStringList fileNames = fileDialog.selectedFiles();
         for (int i = 0, n = fileNames.size(); i < n; i++) {
             openBRDFFile( fileNames[i].toStdString().c_str() );
         }
@@ -184,23 +183,23 @@ void ParameterWindow::removeBRDF( ParameterGroupWidget* p )
         soloBRDF( NULL, false );
 
 
-	// look for the parameter group widget and remove it.
-	// Note: manually searching like this shouldn't be necessary, but I've 
-	// run into all kinds of instability and bizarre behavior trying to make
-	// Qt behave here. This works; I'll take it.
-	for( int i = 0; i < cmdLayout->count(); i++ )
-	{
-		// if we found the parameter group, remove it from the layout
-		if( cmdLayout->itemAt(i)->widget() == p )
-		{
-			QLayoutItem* child = cmdLayout->takeAt(i);
-			child->widget()->deleteLater();
-			delete child;
-			break;
-		}
-	}
+    // look for the parameter group widget and remove it.
+    // Note: manually searching like this shouldn't be necessary, but I've
+    // run into all kinds of instability and bizarre behavior trying to make
+    // Qt behave here. This works; I'll take it.
+    for( int i = 0; i < cmdLayout->count(); i++ )
+    {
+        // if we found the parameter group, remove it from the layout
+        if( cmdLayout->itemAt(i)->widget() == p )
+        {
+            QLayoutItem* child = cmdLayout->takeAt(i);
+            child->widget()->deleteLater();
+            delete child;
+            break;
+        }
+    }
 
-	// force a redraw
+    // force a redraw
     emitBRDFListChanged();
 }
 
@@ -217,14 +216,14 @@ void ParameterWindow::openBRDFFiles( std::vector<std::string> files )
 void ParameterWindow::openBRDFFile( std::string filename, bool emitChanges )
 {
     BRDFBase* b = createBRDFFromFile( filename );
-    
+
     // silently exit if nothing comes back
     if( !b )
         return;
-    
+
     // add the new widget to the top
     ParameterGroupWidget* pgw = addBRDFWidget( b );
-        
+
     // if a BRDF is being soloed, we want to solo this new one instead
     if( soloBRDFWidget )
         soloBRDF( pgw, soloBRDFUsesColors );
@@ -311,7 +310,7 @@ void ParameterWindow::emitBRDFListChanged()
             // set the BRDF
             pkg.brdf = brdf;
 
-            // if we are we displaying all three channels, 
+            // if we are we displaying all three channels,
             if( soloBRDFUsesColors )
             {
                 // add the red channel
@@ -339,7 +338,7 @@ void ParameterWindow::emitBRDFListChanged()
 
                 brdfList.push_back( pkg );
             }
-            
+
             // no longer dirty, until it dirties itself
             soloBRDFWidget->setDirty( false );
         }
@@ -350,10 +349,10 @@ void ParameterWindow::emitBRDFListChanged()
     {
         brdfList = getBRDFList();
     }
-    
+
     // reset dirty flags on the parameter group widgets
     //resetDirtyFlags();
-    
+
     emit( brdfListChanged(brdfList) );
 }
 
@@ -389,12 +388,12 @@ std::vector<brdfPackage> ParameterWindow::getBRDFList()
             pkg.setDrawColor( drawColor.redF(), drawColor.greenF(), drawColor.blueF() );
 
             setBRDFColorMask( pkg );
-            
+
             // set the dirty flag (based on the parameter group widget's dirty flag)
             pkg.dirty = pgw->isDirty();
             pgw->setDirty( false );
 
-            brdfList.push_back( pkg );           
+            brdfList.push_back( pkg );
         }
     }
 

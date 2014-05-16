@@ -62,8 +62,6 @@ class QComboBox;
 class ParameterGroupWidget;
 class QFileDialog;
 
-
-
 class ParameterWindow : public QWidget
 {
     Q_OBJECT
@@ -71,7 +69,7 @@ class ParameterWindow : public QWidget
 public:
     ParameterWindow();
     ~ParameterWindow();
-    
+
     std::vector<brdfPackage> getBRDFList();
 
     void openBRDFFile( std::string, bool emitChanges = true );
@@ -86,7 +84,7 @@ signals:
     void brdfListChanged( std::vector<brdfPackage> );
 
 public slots:
-     
+
     void openBRDFFromFile();
 
     void emitIncidentDirectionChanged();
@@ -94,7 +92,7 @@ public slots:
     void emitBRDFListChanged();
 
 private slots:
-        
+
     void incidentVectorChanged( float newTheta, float newPhi );
     void soloBRDF( ParameterGroupWidget*, bool withColors );
     void removeBRDF( ParameterGroupWidget* );
@@ -104,27 +102,25 @@ private:
     void createLayout();
     ParameterGroupWidget* addBRDFWidget( BRDFBase* b );
     void setBRDFColorMask( brdfPackage& pkg );
-    
+
     FloatVarWidget* incidentThetaWidget;
     FloatVarWidget* incidentPhiWidget;
-    
+
     QVBoxLayout* cmdLayout;
     QGridLayout* mainLayout;
 
     QComboBox* channelComboBox;
     QCheckBox* logPlotCheckbox;
     QCheckBox* nDotLCheckbox;
-    
+
     QFrame* spaceFiller;
-    
+
     float theta, phi;
     bool useLogPlot;
     bool useNDotL;
 
     ParameterGroupWidget* soloBRDFWidget;
     bool soloBRDFUsesColors;
-
-    QFileDialog* fileDialog;
 };
 
 #endif
