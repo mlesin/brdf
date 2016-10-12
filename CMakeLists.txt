@@ -28,6 +28,9 @@ endforeach()
 # QT MOC Related --------------------------------------------------------------
 find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL REQUIRED)
 
+# Find the Zlib library-------------------------------------------------------
+find_package(ZLIB REQUIRED)
+
 # Find files we need to invoke QT MOC on.
 set(MOC_FILES_LOC "src/brdf")
 file(GLOB_RECURSE QT_FILES_TO_MOC ${MOC_FILES_LOC}/*.h)
@@ -48,7 +51,7 @@ add_executable(${BINARY_NAME}  ${brdf_SRC} ${brdf_ptex_SRC}  ${QT_MOCED_HEADERS}
 
 # QT library stuff ------------------------------------------------------------
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(${BINARY_NAME} ${QT_LIBRARIES})
+target_link_libraries(${BINARY_NAME} ${QT_LIBRARIES} ${ZLIB_LIBRARIES})
 
 # pthreads library ------------------------------------------------------------
 set(CMAKE_THREAD_PREFER_PTHREAD 1) #In the presence of choices, use pthreads
